@@ -1,0 +1,47 @@
+.header {
+    background-color: var(--dark-color);
+    color: var(--secondary-color);
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+    object-fit: contain;
+}
+
+.nav ul {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav a {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.nav .list-nav-link a:hover {
+    color: #000;
+}
+
+.header .btn-primary {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .nav ul {
+        display: none;
+        /* Mobile menu implementation usually requires state, keeping simple for now or can add later */
+    }
+}
