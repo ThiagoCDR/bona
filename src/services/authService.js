@@ -35,6 +35,32 @@ export const authService = {
         return user;
     },
 
+    googleLogin: async (token) => {
+        // Send the token to your backend
+        // We also extract payload to send name/email for easy registration on backend (mock/prototype style)
+        // In real app, backend verifies token and gets email/name from Google directly
+        const payload = JSON.parse(atob(token.split('.')[1]));
+
+        const response = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                token,
+                email: payload.email,
+                name: payload.name,
+                picture: payload.picture
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Falha no login com Google');
+        }
+
+        const user = await response.json();
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+        return user;
+    },
+
     logout: () => {
         localStorage.removeItem(CURRENT_USER_KEY);
     },

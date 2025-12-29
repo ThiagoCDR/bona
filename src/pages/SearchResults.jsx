@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CarCard from '../components/CarCard';
 import '../components/Fleet.css'; // Reuse fleet styles
+import { formatDate } from '../utils/dateUtils';
 
 const SearchResults = () => {
     const location = useLocation();
@@ -10,17 +11,21 @@ const SearchResults = () => {
     const [loading, setLoading] = useState(true);
 
     const query = new URLSearchParams(location.search);
-    const pickupDate = query.get('pickup');
-    const returnDate = query.get('return');
+    const rawPickupDate = query.get('pickup');
+    const rawReturnDate = query.get('return');
     const type = query.get('type');
 
+    const pickupDate = formatDate(rawPickupDate);
+    const returnDate = formatDate(rawReturnDate);
+
     useEffect(() => {
-        if (pickupDate && returnDate && type) {
+        if (rawPickupDate && rawReturnDate && type) {
             setLoading(true);
-            searchAvailableCars(pickupDate, returnDate, type)
+            // Use RAW dates for the API search
+            searchAvailableCars(rawPickupDate, rawReturnDate, type)
                 .then(() => setLoading(false));
         }
-    }, [pickupDate, returnDate, type]);
+    }, [rawPickupDate, rawReturnDate, type]);
 
     if (loading) {
         return (
@@ -39,25 +44,30 @@ const SearchResults = () => {
     }) : [];
 
     return (
-        <div className="container" style={{ padding: '40px 0' }}>
-            <div className="section-header">
-                <h2>Veículos Disponíveis</h2>
+        <>
+            <div className="section-topbar" style={{ backgroundColor: '#FC5806', padding: '20px', textAlign: 'center', width: '100%', color: '#fff' }}>
                 <p>Para o período de <strong>{pickupDate}</strong> até <strong>{returnDate}</strong> ({type === 'app' ? 'Motorista App' : 'Diária Normal'})</p>
             </div>
 
-            {displayedCars.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}>
-                    <h3>Nenhum veículo disponível para este período.</h3>
-                    <p>Tente datas diferentes ou verifique se o tipo de aluguel possui veículos compatíveis.</p>
+            <div className="container">
+                <div className="section-header" style={{ padding: '20px 0' }}>
+                    <h2>Veículos Disponíveis</h2>
                 </div>
-            ) : (
-                <div className="fleet-grid">
-                    {displayedCars.map(car => (
-                        <CarCard key={car.id} car={car} showPrice={true} />
-                    ))}
-                </div>
-            )}
-        </div>
+
+                {displayedCars.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <h3>Nenhum veículo disponível para este período.</h3>
+                        <p>Tente datas diferentes ou verifique se o tipo de aluguel possui veículos compatíveis.</p>
+                    </div>
+                ) : (
+                    <div className="fleet-grid">
+                        {displayedCars.map(car => (
+                            <CarCard key={car.id} car={car} showPrice={true} />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 

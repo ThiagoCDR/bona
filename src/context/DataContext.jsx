@@ -128,10 +128,39 @@ export const DataProvider = ({ children }) => {
         fetchFleet();
     };
 
+    const updateRental = async (id, data) => {
+        try {
+            const res = await fetch(`/api/rentals/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error('Falha ao atualizar aluguel');
+            fetchRentals();
+            return true;
+        } catch (error) {
+            console.error('Error updating rental:', error);
+            alert(`Erro ao atualizar aluguel: ${error.message}`);
+            return false;
+        }
+    };
+
+    const deleteRental = async (id) => {
+        if (!confirm('Tem certeza que deseja deletar este aluguel?')) return;
+        try {
+            const res = await fetch(`/api/rentals/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Falha ao deletar aluguel');
+            fetchRentals();
+        } catch (error) {
+            console.error('Error deleting rental:', error);
+            alert(`Erro: ${error.message}`);
+        }
+    };
+
     return (
         <DataContext.Provider value={{
             fleet, rentals, filteredFleet, searchParams,
-            addCar, addRental, deleteCar, updateCar, toggleAvailability, searchAvailableCars
+            addCar, addRental, deleteCar, updateCar, toggleAvailability, searchAvailableCars, updateRental, deleteRental
         }}>
             {children}
         </DataContext.Provider>

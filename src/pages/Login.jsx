@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import LoginWithGoogle from '../components/LoginWithGoogle';
 import './PageStyles.css'; // Reusing page styles for container
 
 const Login = () => {
@@ -80,6 +81,8 @@ const Login = () => {
                         {loading ? 'Entrando...' : 'Entrar'}
                     </button>
                 </form>
+
+                <LoginWithGoogle />
 
                 <div style={{ marginTop: '20px', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '20px' }}>
                     <p>Não tem uma conta? <Link to="/signup" style={{ color: '#FC5806' }}>Crie uma agora</Link></p>

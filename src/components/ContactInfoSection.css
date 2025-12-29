@@ -1,7 +1,6 @@
 .contact-info-section {
     padding: 60px 0;
-    background-color: #f8f9fa;
-    border-top: 1px solid #e9ecef;
+    background-color: #fff;
 }
 
 .contact-content {
@@ -23,16 +22,21 @@
 }
 
 .info-item {
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
 }
 
 .info-item:hover {
-    border: 2px solid var(--primary-color);
-    background-color: #fff5f0;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
 }
 
 .info-item h3 {
@@ -68,16 +72,16 @@
     color: white;
 }
 
-.btn-outline-dark {
+.btn-outline-orange {
     background-color: transparent;
-    border: 2px solid var(--primary-color);
+    border: 1px solid var(--primary-color);
     color: var(--primary-color);
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.btn-outline-dark:hover {
+.btn-outline-orange:hover {
     background-color: var(--primary-color);
     color: white;
 }

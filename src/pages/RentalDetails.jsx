@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
+import { formatDate } from '../utils/dateUtils';
 import './RentalDetails.css';
 
 const RentalDetails = () => {
@@ -80,7 +81,7 @@ const RentalDetails = () => {
                         <tr>
                             <td><strong>Período</strong></td>
                             <td>
-                                {startDate.split('-').reverse().join('/')} até {endDate.split('-').reverse().join('/')}
+                                {formatDate(startDate)} até {formatDate(endDate)}
                                 <br />
                                 <span className="text-muted">({totalDays} diárias)</span>
                             </td>

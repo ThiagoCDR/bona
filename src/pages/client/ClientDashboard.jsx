@@ -2,6 +2,7 @@ import React from 'react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 import './ClientStyles.css';
+import { formatDate } from '../../utils/dateUtils';
 
 const ClientDashboard = () => {
     const { user } = useAuth();
@@ -52,7 +53,7 @@ const ClientDashboard = () => {
                             {myRentals.map(rental => (
                                 <tr key={rental.id}>
                                     <td>{rental.carName || rental.carId}</td>
-                                    <td>{rental.startDate} - {rental.endDate}</td>
+                                    <td>{formatDate(rental.startDate)} - {formatDate(rental.endDate)}</td>
                                     <td>{rental.rentType === 'app' ? 'Motorista App' : 'Diária Normal'}</td>
                                     <td>R$ {rental.price}</td>
                                     <td>
