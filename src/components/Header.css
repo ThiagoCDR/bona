@@ -39,9 +39,61 @@
     font-size: 0.9rem;
 }
 
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background-color: var(--secondary-color);
+    transition: 0.3s;
+}
+
+/* Hamburger animation */
+.change .bar:nth-child(1) {
+    transform: translate(0, 8px) rotate(-45deg);
+}
+
+.change .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.change .bar:nth-child(3) {
+    transform: translate(0, -8px) rotate(45deg);
+}
+
 @media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--dark-color);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .nav.open {
+        max-height: 400px;
+        /* Adjust as needed */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
     .nav ul {
-        display: none;
-        /* Mobile menu implementation usually requires state, keeping simple for now or can add later */
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+        align-items: center;
+        display: flex;
+        /* Ensure it's flex */
     }
 }

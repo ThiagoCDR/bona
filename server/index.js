@@ -94,6 +94,30 @@ app.post('/api/auth/register', async (req, res) => {
     res.json(userWithoutPassword);
 });
 
+app.post('/api/auth/google', async (req, res) => {
+    const db = await openDb();
+    const { token, email, name, picture } = req.body;
+
+    // In a production env, verify 'token' with Google's library.
+    // For this prototype, we trust the client provided email/name (derived from the token on frontend)
+    // or we decode it here if passed raw.
+
+    // Check if user exists
+    let user = await db.get('SELECT * FROM users WHERE email = ?', email);
+
+    if (!user) {
+        // Create new user automatically
+        const result = await db.run(
+            'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+            name, email, 'google-auth', 'client'
+        );
+        user = await db.get('SELECT * FROM users WHERE id = ?', result.lastID);
+    }
+
+    const { password: p, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
+});
+
 // --- Cars Routes ---
 app.get('/api/cars', async (req, res) => {
     const db = await openDb();
@@ -192,6 +216,44 @@ app.post('/api/rentals', async (req, res) => {
         carId, userId, clientName, carName, startDate, endDate, rentType, status, price
     );
     res.status(201).json({ message: 'Aluguel criado' });
+});
+
+app.put('/api/rentals/:id', async (req, res) => {
+    const db = await openDb();
+    const { id } = req.params;
+    const { status, paymentStatus } = req.body; // paymentStatus is optional if we merge it into status
+
+    try {
+        // We'll update the status field. If you want separate payment status, we can add a column, 
+        // but for now the user requested status options like: paid, in processing, pending payment.
+        // So we assume 'status' holds these values.
+
+        const result = await db.run(
+            'UPDATE rentals SET status = ? WHERE id = ?',
+            status, id
+        );
+
+        if (result.changes === 0) {
+            return res.status(404).json({ message: 'Rental not found' });
+        }
+
+        res.json({ message: 'Rental updated', status });
+    } catch (err) {
+        console.error("Error updating rental:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/rentals/:id', async (req, res) => {
+    const db = await openDb();
+    const { id } = req.params;
+    try {
+        await db.run('DELETE FROM rentals WHERE id = ?', id);
+        res.json({ message: 'Rental deleted' });
+    } catch (err) {
+        console.error("Error deleting rental:", err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.get('/api/available-cars', async (req, res) => {

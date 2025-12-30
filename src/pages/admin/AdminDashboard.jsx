@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useData } from '../../context/DataContext';
+import { formatDate } from '../../utils/dateUtils';
 import './AdminStyles.css';
 
 const AdminDashboard = () => {
-    const { fleet, rentals, addCar, deleteCar, updateCar, toggleAvailability } = useData();
+    const { fleet, rentals, addCar, deleteCar, updateCar, toggleAvailability, updateRental, deleteRental } = useData();
     const [view, setView] = useState('fleet'); // 'fleet' or 'rentals'
     const [newCar, setNewCar] = useState({
         name: '',
@@ -328,6 +329,7 @@ const AdminDashboard = () => {
                                 <th>Período</th>
                                 <th>Tipo</th>
                                 <th>Status</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -336,12 +338,56 @@ const AdminDashboard = () => {
                                     <td>{rental.id}</td>
                                     <td>{rental.clientName || rental.userId}</td>
                                     <td>{rental.carName || rental.carId}</td>
-                                    <td>{rental.startDate} até {rental.endDate}</td>
+                                    <td>{formatDate(rental.startDate)} até {formatDate(rental.endDate)}</td>
                                     <td>{rental.rentType === 'app' ? 'App' : 'Normal'}</td>
                                     <td>
-                                        <span className={`status-badge ${rental.status.toLowerCase()}`}>
-                                            {rental.status}
-                                        </span>
+                                        <select
+                                            value={rental.status}
+                                            onChange={(e) => updateRental(rental.id, { status: e.target.value })}
+                                            style={{
+                                                padding: '5px',
+                                                borderRadius: '5px',
+                                                border: '1px solid #ccc',
+                                                backgroundColor:
+                                                    rental.status === 'Pago' ? '#d4edda' :
+                                                        rental.status === 'Em Processamento' ? '#fff3cd' :
+                                                            rental.status === 'Pendente Pagamento' ? '#f8d7da' :
+                                                                rental.status === 'Ativo' ? '#cce5ff' : '#f8f9fa'
+                                            }}
+                                        >
+                                            <option value="Pendente Pagamento">Pendente Pagamento</option>
+                                            <option value="Em Processamento">Em Processamento</option>
+                                            <option value="Pago">Pago</option>
+                                            <option value="Ativo">Ativo</option>
+                                            <option value="Finalizado">Finalizado</option>
+                                        </select>
+                                    </td>
+                                    <td style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                                        <button
+                                            className="btn btn-sm btn-outline"
+                                            onClick={() => alert(`Gerando Boleto para aluguel #${rental.id}... (Simulação)`)}
+                                            style={{ fontSize: '0.8rem', padding: '5px' }}
+                                        >
+                                            Boleto
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-outline"
+                                            onClick={() => alert(`Gerando Código Pix para aluguel #${rental.id}... (Simulação)`)}
+                                            style={{ fontSize: '0.8rem', padding: '5px' }}
+                                        >
+                                            Pix
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-outline-danger"
+                                            onClick={() => deleteRental(rental.id)}
+                                            style={{ borderColor: '#dc3545', color: '#dc3545', padding: '5px 10px' }}
+                                            title="Deletar Aluguel"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                                <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                                            </svg>
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
